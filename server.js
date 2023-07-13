@@ -1,7 +1,12 @@
 const express = require('express');
-const { get } = require('http');
 const app = express();
 const books = require('./server/routes/books')
+require('dotenv').config();
+const connectDB = require('./server/db/connect');
+
+//middleware
+
+app.use(express.json());
 
 //routes
 app.get("/api/v1/library-home-page", (req,res)=>{
@@ -17,4 +22,14 @@ app.use("/api/v1/books",books);
 // delete("api/v1/books/:id")
 
 const port = 5001;
-app.listen(port,console.log(`App is listening at ${port}...`))
+
+const start = async() =>{
+    try{
+        await connectDB(process.env.MONGO_URI)
+        app.listen(port,console.log(`App is listening at ${port}...`))
+    }catch(error){
+        console.log(error);
+    }
+}
+
+start()
